@@ -152,7 +152,9 @@ function Landing() {
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Preço
               </span>
-              <span className="mt-1 text-5xl font-extrabold text-primary">{priceLabel}</span>
+              <span className="mt-1 text-4xl font-extrabold text-primary md:text-5xl">
+                {priceLabel}
+              </span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Button
@@ -182,71 +184,6 @@ function Landing() {
                 {paymentInstructions.holder}).
               </li>
               <li>{paymentInstructions.note}</li>
-            </ol>
-          </div>
-        </Card>
-      </section>
-
-      {/* Benefits */}
-      <section id="beneficios" className="border-y border-border/60 bg-card/60">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-          <h2 className="text-3xl font-bold text-primary md:text-4xl">O que vai aprender</h2>
-          <p className="mt-2 text-muted-foreground">
-            Tudo para começar do zero e chegar ao nível profissional.
-          </p>
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {COURSE.benefits.map((b) => (
-              <Card key={b} className="flex gap-3 border-border/60 p-5">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
-                <p className="text-sm font-medium text-foreground">{b}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA / Compra */}
-      <section id="comprar" className="mx-auto max-w-3xl px-4 py-20">
-        <Card className="border-border/60 p-8 md:p-10">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary">Garantir o meu acesso</h2>
-            <p className="mt-3 text-muted-foreground">{COURSE.longDescription}</p>
-            <div className="my-8 inline-flex flex-col items-center rounded-2xl bg-secondary px-10 py-6">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Preço
-              </span>
-              <span className="mt-1 text-5xl font-extrabold text-primary">{COURSE.priceLabel}</span>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                <Link to="/auth">Criar conta e comprar</Link>
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                Já tem conta?{" "}
-                <Link to="/auth" className="underline">
-                  Entre aqui
-                </Link>
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-10 rounded-xl border border-dashed border-border bg-background/60 p-6 text-sm">
-            <p className="font-semibold text-primary">Como comprar:</p>
-            <ol className="mt-3 list-decimal space-y-1 pl-5 text-muted-foreground">
-              <li>Crie a sua conta gratuitamente.</li>
-              <li>
-                Faça o pagamento:{" "}
-                <span className="font-medium text-foreground">
-                  {COURSE.paymentInstructions.bank}
-                </span>{" "}
-                — IBAN <span className="font-mono">{COURSE.paymentInstructions.iban}</span> (
-                {COURSE.paymentInstructions.holder}).
-              </li>
-              <li>{COURSE.paymentInstructions.note}</li>
             </ol>
           </div>
         </Card>

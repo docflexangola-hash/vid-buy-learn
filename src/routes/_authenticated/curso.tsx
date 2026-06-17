@@ -774,11 +774,11 @@ function WhatsAppSettings({ userId }: { userId: string | null }) {
       <p className="mt-1 text-xs text-muted-foreground">
         Regista o teu número para receber notificações (matrícula ativada, certificado, etc.)
       </p>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
         <input
           type="tel"
           placeholder="+244900000000"
-          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:flex-1"
           value={number}
           onChange={(e) => setNumber(e.target.value)}
         />

@@ -141,6 +141,7 @@ function AdminPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [profileStudent, setProfileStudent] = useState<Student | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loadLessons = async () => {
     const { data } = await supabase.from("lessons").select("*").order("position");
@@ -269,27 +270,29 @@ function AdminPage() {
       <div className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-2xl font-bold text-primary md:text-3xl">Painel admin</h1>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-          <TabsList>
-            <TabsTrigger value="dashboard">
-              <LayoutDashboard className="mr-1.5 h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger value="lessons">Aulas ({lessons.length})</TabsTrigger>
-            <TabsTrigger value="students">Alunos ({students.length})</TabsTrigger>
-            <TabsTrigger value="certificates">Certificados</TabsTrigger>
-            <TabsTrigger value="admins">
-              <Shield className="mr-1.5 h-4 w-4" />
-              Admins
-            </TabsTrigger>
-            <TabsTrigger value="blog">
-              <FileText className="mr-1.5 h-4 w-4" />
-              Blog
-            </TabsTrigger>
-            <TabsTrigger value="payments">
-              <DollarSign className="mr-1.5 h-4 w-4" />
-              Pagamentos
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto">
+            <TabsList className="flex-nowrap">
+              <TabsTrigger value="dashboard">
+                <LayoutDashboard className="mr-1.5 h-4 w-4" />
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger value="lessons">Aulas ({lessons.length})</TabsTrigger>
+              <TabsTrigger value="students">Alunos ({students.length})</TabsTrigger>
+              <TabsTrigger value="certificates">Certificados</TabsTrigger>
+              <TabsTrigger value="admins">
+                <Shield className="mr-1.5 h-4 w-4" />
+                Admins
+              </TabsTrigger>
+              <TabsTrigger value="blog">
+                <FileText className="mr-1.5 h-4 w-4" />
+                Blog
+              </TabsTrigger>
+              <TabsTrigger value="payments">
+                <DollarSign className="mr-1.5 h-4 w-4" />
+                Pagamentos
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="lessons" className="space-y-6 pt-4">
             <Card className="p-6">
@@ -326,32 +329,34 @@ function AdminPage() {
                 <ul className="mt-4 divide-y divide-border">
                   {lessons.map((l, i) => (
                     <li key={l.id} className="flex items-center gap-3 py-3">
-                      <span className="w-6 text-sm text-muted-foreground">{i + 1}.</span>
-                      <div className="flex-1">
-                        <p className="font-medium">{l.title}</p>
+                      <span className="w-6 shrink-0 text-sm text-muted-foreground">{i + 1}.</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{l.title}</p>
                         <p className="truncate text-xs text-muted-foreground">{l.video_url}</p>
                       </div>
-                      <MaterialsDialog lesson={l} />
-                      <QuizzesDialog lesson={l} />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => move(l, -1)}
-                        disabled={i === 0}
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => move(l, 1)}
-                        disabled={i === lessons.length - 1}
-                      >
-                        <ArrowDown className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => removeLesson(l)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex shrink-0 items-center gap-1 overflow-x-auto">
+                        <MaterialsDialog lesson={l} />
+                        <QuizzesDialog lesson={l} />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => move(l, -1)}
+                          disabled={i === 0}
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => move(l, 1)}
+                          disabled={i === lessons.length - 1}
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" onClick={() => removeLesson(l)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -362,43 +367,63 @@ function AdminPage() {
           <TabsContent value="students" className="pt-4">
             <Card className="p-6">
               <h2 className="text-lg font-semibold text-primary">Alunos & inscrições</h2>
+              <Input
+                placeholder="Pesquisar aluno por nome ou email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="mb-4"
+              />
               {students.length === 0 ? (
                 <p className="mt-3 text-sm text-muted-foreground">
                   Ainda não há pedidos de inscrição.
                 </p>
               ) : (
                 <ul className="mt-4 divide-y divide-border">
-                  {students.map((s) => (
-                    <li key={s.id} className="flex flex-col gap-3 py-3 md:flex-row md:items-center">
-                      <div className="flex-1">
-                        <button
-                          onClick={() => setProfileStudent(s)}
-                          className="font-medium text-left hover:text-gold hover:underline"
-                        >
-                          {s.profile?.full_name || "(sem nome)"}
-                        </button>
-                        <p className="text-xs text-muted-foreground">{s.profile?.email}</p>
-                      </div>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${s.status === "active" ? "bg-gold text-gold-foreground" : "bg-secondary text-secondary-foreground"}`}
+                  {students
+                    .filter((s) => {
+                      const name = (s.profile?.full_name ?? "").toLowerCase();
+                      const email = (s.profile?.email ?? "").toLowerCase();
+                      const q = searchQuery.toLowerCase();
+                      return name.includes(q) || email.includes(q);
+                    })
+                    .map((s) => (
+                      <li
+                        key={s.id}
+                        className="flex flex-col gap-3 py-3 md:flex-row md:items-center"
                       >
-                        {s.status === "active" ? "Ativo" : "Pendente"}
-                      </span>
-                      {s.status === "pending" ? (
-                        <Button
-                          size="sm"
-                          onClick={() => setStatus(s, "active")}
-                          className="bg-primary text-primary-foreground"
+                        <div className="flex-1">
+                          <button
+                            onClick={() => setProfileStudent(s)}
+                            className="font-medium text-left hover:text-gold hover:underline"
+                          >
+                            {s.profile?.full_name || "(sem nome)"}
+                          </button>
+                          <p className="text-xs text-muted-foreground">{s.profile?.email}</p>
+                        </div>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${s.status === "active" ? "bg-gold text-gold-foreground" : "bg-secondary text-secondary-foreground"}`}
                         >
-                          Liberar acesso
-                        </Button>
-                      ) : (
-                        <Button size="sm" variant="outline" onClick={() => setStatus(s, "pending")}>
-                          Revogar
-                        </Button>
-                      )}
-                    </li>
-                  ))}
+                          {s.status === "active" ? "Ativo" : "Pendente"}
+                        </span>
+                        {s.status === "pending" ? (
+                          <Button
+                            size="sm"
+                            onClick={() => setStatus(s, "active")}
+                            className="bg-primary text-primary-foreground"
+                          >
+                            Liberar acesso
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setStatus(s, "pending")}
+                          >
+                            Revogar
+                          </Button>
+                        )}
+                      </li>
+                    ))}
                 </ul>
               )}
             </Card>
@@ -785,7 +810,7 @@ function CertificatesTab() {
                 </span>
               </div>
               {r.status === "pending" && (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:flex-wrap">
                   <Button
                     size="sm"
                     onClick={() => approve(r)}
@@ -795,7 +820,7 @@ function CertificatesTab() {
                   </Button>
                   <Input
                     placeholder="Motivo da rejeição..."
-                    className="h-8 w-56 text-xs"
+                    className="h-8 w-full sm:max-w-xs text-xs"
                     value={rejectionText[r.id] || ""}
                     onChange={(e) => setRejectionText({ ...rejectionText, [r.id]: e.target.value })}
                   />
