@@ -45,6 +45,9 @@ export function SiteHeader() {
           <Logo className="h-9" />
         </Link>
         <nav className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/blog">Blog</Link>
+          </Button>
           {email ? (
             <>
               <Button asChild variant="ghost" size="sm">

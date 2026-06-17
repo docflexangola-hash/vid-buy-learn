@@ -55,6 +55,7 @@ import {
   certificateApprovedMessage,
 } from "@/lib/whatsapp";
 import { COURSE } from "@/lib/course";
+import { BlogAdminTab } from "@/components/BlogAdminTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Ondjango Capital" }] }),
@@ -137,6 +138,7 @@ function AdminPage() {
   const [url, setUrl] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [profileStudent, setProfileStudent] = useState<Student | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
 
   const loadLessons = async () => {
     const { data } = await supabase.from("lessons").select("*").order("position");
@@ -174,6 +176,7 @@ function AdminPage() {
       const ok = !!roles?.some((r) => r.role === "admin");
       setAllowed(ok);
       if (ok) {
+        setCurrentUserId(u.user.id);
         await loadLessons();
         await loadStudents();
       }
@@ -275,6 +278,10 @@ function AdminPage() {
             <TabsTrigger value="admins">
               <Shield className="mr-1.5 h-4 w-4" />
               Admins
+            </TabsTrigger>
+            <TabsTrigger value="blog">
+              <FileText className="mr-1.5 h-4 w-4" />
+              Blog
             </TabsTrigger>
           </TabsList>
 
@@ -401,6 +408,9 @@ function AdminPage() {
 
           <TabsContent value="admins">
             <AdminsTab />
+          </TabsContent>
+          <TabsContent value="blog">
+            <BlogAdminTab currentUserId={currentUserId} />
           </TabsContent>
         </Tabs>
 

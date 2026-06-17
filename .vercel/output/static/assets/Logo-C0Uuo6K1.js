@@ -1,0 +1,1 @@
+import{r as e}from"./useRouter-CYijDE91.js";var t=`/assets/ondjango-logo-CwoGZLhw.png`,n=e();function r({className:e=`h-10`}){return(0,n.jsx)(`img`,{src:t,alt:`Ondjango Capital`,className:e})}export{r as t};
