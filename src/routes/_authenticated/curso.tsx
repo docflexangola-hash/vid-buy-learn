@@ -696,7 +696,15 @@ function CertificateRequestSection({
       {request.status === "approved" && (
         <div>
           <p className="text-sm text-green-600">Certificado aprovado! 🎉</p>
-          <p className="mt-1 text-xs text-muted-foreground">Em breve disponível para download.</p>
+          {request.certificate_url ? (
+            <a href={request.certificate_url} target="_blank" rel="noopener noreferrer" download>
+              <Button size="sm" className="mt-2 bg-gold text-gold-foreground hover:bg-gold/90">
+                <Download className="mr-1 h-4 w-4" /> Descarregar Certificado
+              </Button>
+            </a>
+          ) : (
+            <p className="mt-1 text-xs text-muted-foreground">A preparar o download...</p>
+          )}
         </div>
       )}
       {request.status === "rejected" && (

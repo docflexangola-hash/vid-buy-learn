@@ -56,6 +56,7 @@ import {
 } from "@/lib/whatsapp";
 import { COURSE } from "@/lib/course";
 import { BlogAdminTab } from "@/components/BlogAdminTab";
+import { approveCertificate } from "@/lib/api/certificate.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Ondjango Capital" }] }),
@@ -701,17 +702,15 @@ function CertificatesTab() {
 
   const approve = async (r: CertificateRequest) => {
     const { data: userData } = await supabase.auth.getUser();
-    const certUrl = `/certificates/${r.user_id}.pdf`;
-    const { error } = await supabase
-      .from("certificate_requests")
-      .update({
-        status: "approved",
-        certificate_url: certUrl,
-        reviewed_at: new Date().toISOString(),
-        reviewer_id: userData.user?.id,
-      })
-      .eq("id", r.id);
-    if (error) return toast.error(error.message);
+    if (!userData.user) return toast.error("Não autenticado");
+
+    const result = await approveCertificate({
+      requestId: r.id,
+      reviewerId: userData.user.id,
+      reviewerName: userData.user.email ?? "Admin",
+    });
+
+    if (result.error) return toast.error(result.error.message || "Erro ao gerar certificado");
     toast.success("Certificado aprovado");
     if (r.profile?.full_name) {
       const { data: prof } = await supabase
