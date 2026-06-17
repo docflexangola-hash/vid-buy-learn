@@ -78,9 +78,12 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
 
-  html, body {
+  html,
+  body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
@@ -88,19 +91,33 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-image:
+      radial-gradient(rgba(140, 120, 85, 0.35) 1px, transparent 1px),
+      radial-gradient(var(--dot-color) 1px, transparent 1px);
     background-size: 18px 18px;
     background-position: 0 0;
   }
 
-  h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.01em; }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
 }
 
 @layer utilities {
   .bg-dots {
-    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-image:
+      radial-gradient(rgba(140, 120, 85, 0.35) 1px, transparent 1px),
+      radial-gradient(var(--dot-color) 1px, transparent 1px);
     background-size: 18px 18px;
   }
-  .text-gold { color: var(--gold); }
-  .bg-gold { background-color: var(--gold); }
+  .text-gold {
+    color: var(--gold);
+  }
+  .bg-gold {
+    background-color: var(--gold);
+  }
 }

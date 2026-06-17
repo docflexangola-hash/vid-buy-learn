@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,9 +19,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Página não encontrada</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A página que procura não existe.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">A página que procura não existe.</p>
         <div className="mt-6">
           <Link
             to="/"
@@ -39,9 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -78,9 +72,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Costura do Zero ao Profissional — Ondjango Capital" },
-      { name: "description", content: "Curso online de corte e costura. Aprenda do zero ao nível profissional." },
+      {
+        name: "description",
+        content: "Curso online de corte e costura. Aprenda do zero ao nível profissional.",
+      },
       { property: "og:title", content: "Costura do Zero ao Profissional" },
-      { property: "og:description", content: "Curso online de corte e costura. Aprenda do zero ao nível profissional." },
+      {
+        property: "og:description",
+        content: "Curso online de corte e costura. Aprenda do zero ao nível profissional.",
+      },
       { property: "og:type", content: "website" },
     ],
     links: [

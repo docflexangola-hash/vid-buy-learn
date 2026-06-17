@@ -42,20 +42,25 @@ function AuthPage() {
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setSiLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
       email: siEmail,
       password: siPass,
     });
     setSiLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Bem-vindo!");
-    navigate({ to: "/curso" });
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", signInData.user.id);
+    const isAdmin = !!roles?.some((r) => r.role === "admin");
+    navigate({ to: isAdmin ? "/admin" : "/curso" });
   };
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: suEmail,
       password: suPass,
       options: {
@@ -65,9 +70,13 @@ function AuthPage() {
     });
     setSuLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Conta criada! Pode entrar agora.");
-    setTab("signin");
-    setSiEmail(suEmail);
+    if (data.session) {
+      toast.success("Conta criada! Pode entrar agora.");
+      setTab("signin");
+      setSiEmail(suEmail);
+    } else {
+      toast.success("Conta criada! Verifique o seu email para confirmar o registo.");
+    }
   };
 
   const onReset = async (e: React.FormEvent) => {
@@ -99,13 +108,29 @@ function AuthPage() {
               <form onSubmit={onSignIn} className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <Label htmlFor="si-email">Email</Label>
-                  <Input id="si-email" type="email" required value={siEmail} onChange={(e) => setSiEmail(e.target.value)} />
+                  <Input
+                    id="si-email"
+                    type="email"
+                    required
+                    value={siEmail}
+                    onChange={(e) => setSiEmail(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="si-pass">Senha</Label>
-                  <Input id="si-pass" type="password" required value={siPass} onChange={(e) => setSiPass(e.target.value)} />
+                  <Input
+                    id="si-pass"
+                    type="password"
+                    required
+                    value={siPass}
+                    onChange={(e) => setSiPass(e.target.value)}
+                  />
                 </div>
-                <Button type="submit" disabled={siLoading} className="w-full bg-primary text-primary-foreground">
+                <Button
+                  type="submit"
+                  disabled={siLoading}
+                  className="w-full bg-primary text-primary-foreground"
+                >
                   {siLoading ? "A entrar..." : "Entrar"}
                 </Button>
               </form>
@@ -115,17 +140,39 @@ function AuthPage() {
               <form onSubmit={onSignUp} className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <Label htmlFor="su-name">Nome completo</Label>
-                  <Input id="su-name" required value={suName} onChange={(e) => setSuName(e.target.value)} />
+                  <Input
+                    id="su-name"
+                    required
+                    value={suName}
+                    onChange={(e) => setSuName(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="su-email">Email</Label>
-                  <Input id="su-email" type="email" required value={suEmail} onChange={(e) => setSuEmail(e.target.value)} />
+                  <Input
+                    id="su-email"
+                    type="email"
+                    required
+                    value={suEmail}
+                    onChange={(e) => setSuEmail(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="su-pass">Senha (mín. 6)</Label>
-                  <Input id="su-pass" type="password" required minLength={6} value={suPass} onChange={(e) => setSuPass(e.target.value)} />
+                  <Input
+                    id="su-pass"
+                    type="password"
+                    required
+                    minLength={6}
+                    value={suPass}
+                    onChange={(e) => setSuPass(e.target.value)}
+                  />
                 </div>
-                <Button type="submit" disabled={suLoading} className="w-full bg-primary text-primary-foreground">
+                <Button
+                  type="submit"
+                  disabled={suLoading}
+                  className="w-full bg-primary text-primary-foreground"
+                >
                   {suLoading ? "A criar..." : "Criar conta"}
                 </Button>
               </form>
@@ -133,12 +180,24 @@ function AuthPage() {
 
             <TabsContent value="reset">
               <form onSubmit={onReset} className="space-y-4 pt-4">
-                <p className="text-sm text-muted-foreground">Enviaremos um link para repor a sua senha.</p>
+                <p className="text-sm text-muted-foreground">
+                  Enviaremos um link para repor a sua senha.
+                </p>
                 <div className="space-y-2">
                   <Label htmlFor="rst-email">Email</Label>
-                  <Input id="rst-email" type="email" required value={rstEmail} onChange={(e) => setRstEmail(e.target.value)} />
+                  <Input
+                    id="rst-email"
+                    type="email"
+                    required
+                    value={rstEmail}
+                    onChange={(e) => setRstEmail(e.target.value)}
+                  />
                 </div>
-                <Button type="submit" disabled={rstLoading} className="w-full bg-primary text-primary-foreground">
+                <Button
+                  type="submit"
+                  disabled={rstLoading}
+                  className="w-full bg-primary text-primary-foreground"
+                >
                   {rstLoading ? "A enviar..." : "Enviar link"}
                 </Button>
               </form>
@@ -146,7 +205,9 @@ function AuthPage() {
           </Tabs>
         </Card>
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          <Link to="/" className="underline">← Voltar à página inicial</Link>
+          <Link to="/" className="underline">
+            ← Voltar à página inicial
+          </Link>
         </p>
       </div>
     </div>

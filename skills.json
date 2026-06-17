@@ -1,0 +1,52 @@
+{
+  "skills": [
+    {
+      "source": "anthropics/skills",
+      "skills": [
+        "webapp-testing"
+      ]
+    },
+    {
+      "source": "better-auth/skills",
+      "skills": [
+        "better-auth-best-practices"
+      ]
+    },
+    {
+      "source": "github/awesome-copilot",
+      "skills": [
+        "chrome-devtools"
+      ]
+    },
+    {
+      "source": "obra/superpowers",
+      "skills": [
+        "brainstorming"
+      ]
+    },
+    {
+      "source": "shubhamsaboo/awesome-llm-apps",
+      "skills": [
+        "project-planner"
+      ]
+    },
+    {
+      "source": "supabase/agent-skills",
+      "skills": [
+        "supabase-postgres-best-practices"
+      ]
+    },
+    {
+      "source": "vercel-labs/agent-skills",
+      "skills": [
+        "vercel-react-best-practices"
+      ]
+    },
+    {
+      "source": "wshobson/agents",
+      "skills": [
+        "responsive-design"
+      ]
+    }
+  ]
+}
