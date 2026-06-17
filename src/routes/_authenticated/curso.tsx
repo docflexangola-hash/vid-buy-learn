@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { COURSE } from "@/lib/course";
+import { getSiteConfig, type SiteConfigData } from "@/lib/api/config.functions";
 import {
   Lock,
   PlayCircle,
@@ -97,6 +98,7 @@ function CursoPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [siteConfig, setSiteConfig] = useState<SiteConfigData | null>(null);
 
   const loadCurrentLessonData = async (lessonId: string) => {
     const [matRes, quizRes, commRes] = await Promise.all([
@@ -154,6 +156,10 @@ function CursoPage() {
           .select("role")
           .eq("user_id", u.user.id);
         setIsAdmin(!!roles?.some((r) => r.role === "admin"));
+
+        getSiteConfig().then((data) => {
+          if (!cancelled) setSiteConfig(data);
+        });
 
         const { data: enr } = await supabase
           .from("enrollments")
@@ -285,21 +291,26 @@ function CursoPage() {
               <ul className="mt-2 space-y-1 text-muted-foreground">
                 <li>
                   <span className="font-medium text-foreground">Banco:</span>{" "}
-                  {COURSE.paymentInstructions.bank}
+                  {siteConfig?.payment_bank ?? COURSE.paymentInstructions.bank}
                 </li>
                 <li>
                   <span className="font-medium text-foreground">IBAN:</span>{" "}
-                  <span className="font-mono">{COURSE.paymentInstructions.iban}</span>
+                  <span className="font-mono">
+                    {siteConfig?.payment_iban ?? COURSE.paymentInstructions.iban}
+                  </span>
                 </li>
                 <li>
                   <span className="font-medium text-foreground">Titular:</span>{" "}
-                  {COURSE.paymentInstructions.holder}
+                  {siteConfig?.payment_holder ?? COURSE.paymentInstructions.holder}
                 </li>
                 <li>
-                  <span className="font-medium text-foreground">Valor:</span> {COURSE.priceLabel}
+                  <span className="font-medium text-foreground">Valor:</span>{" "}
+                  {siteConfig?.price_label ?? COURSE.priceLabel}
                 </li>
               </ul>
-              <p className="mt-3 text-xs">{COURSE.paymentInstructions.note}</p>
+              <p className="mt-3 text-xs">
+                {siteConfig?.payment_note ?? COURSE.paymentInstructions.note}
+              </p>
             </div>
             {status === "none" && (
               <Button onClick={requestAccess} className="bg-primary text-primary-foreground">

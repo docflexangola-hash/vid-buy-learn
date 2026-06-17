@@ -347,6 +347,48 @@ export type Database = {
           },
         ];
       };
+      site_config: {
+        Row: {
+          id: string;
+          payment_bank: string;
+          payment_iban: string;
+          payment_holder: string;
+          payment_whatsapp: string;
+          payment_note: string;
+          price_label: string;
+          price_number: number;
+          currency: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          payment_bank?: string;
+          payment_iban?: string;
+          payment_holder?: string;
+          payment_whatsapp?: string;
+          payment_note?: string;
+          price_label?: string;
+          price_number?: number;
+          currency?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          payment_bank?: string;
+          payment_iban?: string;
+          payment_holder?: string;
+          payment_whatsapp?: string;
+          payment_note?: string;
+          price_label?: string;
+          price_number?: number;
+          currency?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       user_roles: {
         Row: {
           created_at: string;
