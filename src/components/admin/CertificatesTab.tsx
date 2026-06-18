@@ -45,16 +45,7 @@ export function CertificatesTab() {
   const approve = async (r: CertificateRequest) => {
     setApprovingId(r.id);
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        toast.error("Não autenticado");
-        return;
-      }
-
-      await approveCertificate({
-        requestId: r.id,
-        reviewerId: userData.user.id,
-      });
+      await approveCertificate({ requestId: r.id });
 
       toast.success("Certificado aprovado");
       if (r.profile?.full_name) {

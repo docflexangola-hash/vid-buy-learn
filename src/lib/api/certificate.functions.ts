@@ -1,21 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/api/admin.functions";
 import {
   generateCertificatePdf,
   buildCertificateFilename,
 } from "../certificate/generate-pdf.server";
 
 export const approveCertificate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator(
     z.object({
       requestId: z.string().uuid(),
-      reviewerId: z.string().uuid(),
     }),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     try {
+      await assertAdmin(context.userId);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { requestId, reviewerId } = data;
+      const { requestId } = data;
 
       const { data: req, error: reqErr } = await supabaseAdmin
         .from("certificate_requests")
@@ -60,7 +63,7 @@ export const approveCertificate = createServerFn({ method: "POST" })
           status: "approved",
           certificate_url: certificateUrl,
           reviewed_at: completionDate.toISOString(),
-          reviewer_id: reviewerId,
+          reviewer_id: context.userId,
         })
         .eq("id", requestId);
 
