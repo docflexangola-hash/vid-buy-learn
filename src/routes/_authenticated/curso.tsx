@@ -157,9 +157,13 @@ function CursoPage() {
           .eq("user_id", u.user.id);
         setIsAdmin(!!roles?.some((r) => r.role === "admin"));
 
-        getSiteConfig().then((data) => {
-          if (!cancelled) setSiteConfig(data);
-        });
+        getSiteConfig()
+          .then((data) => {
+            if (!cancelled) setSiteConfig(data);
+          })
+          .catch((err) => {
+            console.error("Erro ao carregar configurações no curso:", err);
+          });
 
         const { data: enr } = await supabase
           .from("enrollments")

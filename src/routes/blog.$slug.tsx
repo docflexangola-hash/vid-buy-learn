@@ -21,6 +21,9 @@ type BlogPost = {
 };
 
 export const Route = createFileRoute("/blog/$slug")({
+  head: ({ params }) => ({
+    meta: [{ title: `${params.slug.replace(/-/g, " ")} — Ondjango Capital` }],
+  }),
   component: BlogPostPage,
 });
 

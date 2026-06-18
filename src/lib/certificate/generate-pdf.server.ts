@@ -1,9 +1,13 @@
 import { PDFDocument, rgb } from "pdf-lib";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const COURSE_NAME = "Costura do Zero ao Profissional";
-const FONTS_DIR = path.resolve("src/lib/certificate/fonts");
+const FONTS_DIR = path.resolve(__dirname, "fonts");
 
 // A4 landscape
 const PAGE_W = 841.89;
@@ -21,7 +25,12 @@ const WHITE_BG = rgb(0.98, 0.969, 0.941);
 const DOT_COLOR = rgb(0.549, 0.471, 0.333);
 
 function loadFont(filename: string): Uint8Array {
-  return fs.readFileSync(path.join(FONTS_DIR, filename));
+  try {
+    return fs.readFileSync(path.join(FONTS_DIR, filename));
+  } catch (err) {
+    console.error(`[Certificate] Failed to load font: ${filename} from ${FONTS_DIR}`, err);
+    throw new Error(`Erro ao carregar fonte do certificado: ${filename}`);
+  }
 }
 
 function sanitizeName(name: string): string {

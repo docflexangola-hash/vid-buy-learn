@@ -14,20 +14,29 @@ export type SiteConfigData = {
 
 export const getSiteConfig = createServerFn({ method: "GET" }).handler(
   async (): Promise<SiteConfigData | null> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin.from("site_config").select("*").limit(1).single();
-
-    if (!data) return null;
-    return {
-      payment_bank: data.payment_bank,
-      payment_iban: data.payment_iban,
-      payment_holder: data.payment_holder,
-      payment_whatsapp: data.payment_whatsapp,
-      payment_note: data.payment_note,
-      price_label: data.price_label,
-      price_number: data.price_number,
-      currency: data.currency,
-    };
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data, error } = await supabaseAdmin
+        .from("site_config")
+        .select("*")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!data) return null;
+      return {
+        payment_bank: data.payment_bank,
+        payment_iban: data.payment_iban,
+        payment_holder: data.payment_holder,
+        payment_whatsapp: data.payment_whatsapp,
+        payment_note: data.payment_note,
+        price_label: data.price_label,
+        price_number: data.price_number,
+        currency: data.currency,
+      };
+    } catch (err) {
+      console.error("[getSiteConfig]", err);
+      return null;
+    }
   },
 );
 
@@ -45,21 +54,31 @@ export const updateSiteConfig = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: existing } = await supabaseAdmin
-      .from("site_config")
-      .select("id")
-      .limit(1)
-      .single();
+      const { data: existing, error: fetchErr } = await supabaseAdmin
+        .from("site_config")
+        .select("id")
+        .limit(1)
+        .maybeSingle();
 
-    if (!existing) {
-      const { error } = await supabaseAdmin.from("site_config").insert(data);
-      if (error) throw new Error(error.message);
-    } else {
-      const { error } = await supabaseAdmin.from("site_config").update(data).eq("id", existing.id);
-      if (error) throw new Error(error.message);
+      if (fetchErr) throw new Error(fetchErr.message);
+
+      if (!existing) {
+        const { error } = await supabaseAdmin.from("site_config").insert(data);
+        if (error) throw new Error(error.message);
+      } else {
+        const { error } = await supabaseAdmin
+          .from("site_config")
+          .update(data)
+          .eq("id", existing.id);
+        if (error) throw new Error(error.message);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("[updateSiteConfig]", err);
+      throw new Error("Erro ao actualizar configuração. Tente novamente.");
     }
-
-    return { success: true };
   });

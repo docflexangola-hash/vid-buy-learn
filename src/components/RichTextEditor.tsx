@@ -23,10 +23,9 @@ import {
 type RichTextEditorProps = {
   content: string;
   onChange: (html: string) => void;
-  placeholder?: string;
 };
 
-export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
+export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   const [uploading, setUploading] = useState(false);
 
   const editor = useEditor({

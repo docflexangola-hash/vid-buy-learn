@@ -31,10 +31,21 @@ function Landing() {
   const [configLoading, setConfigLoading] = useState(true);
 
   useEffect(() => {
-    getSiteConfig().then((data) => {
-      setSiteConfig(data);
-      setConfigLoading(false);
-    });
+    let cancelled = false;
+    getSiteConfig()
+      .then((data) => {
+        if (!cancelled) {
+          setSiteConfig(data);
+          setConfigLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar configurações:", err);
+        if (!cancelled) setConfigLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const priceLabel = siteConfig?.price_label ?? COURSE.priceLabel;
